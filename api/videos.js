@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || 'a795c68509msh32efefe1c84b123p16d7a5jsnaeccde4317d4';
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || "https://youtube-v31.p.rapidapi.com";
 
 export default async function handler(req, res) {
