@@ -1,2 +1,39 @@
-.vercel
-.env*.local
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.log
+
+# Cache & output files
+.cache/
+out/
+dist/
+build/
+.vercel/
+.vscode/
+.DS_Store
+
+# Git files
+.git/
+.gitignore
+
+# OS-specific files
+Thumbs.db
+ehthumbs.db
+.idea/
