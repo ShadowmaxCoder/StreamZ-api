@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
-const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST;
+const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || "https://youtube-v31.p.rapidapi.com";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
