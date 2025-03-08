@@ -1,6 +1,7 @@
 {
   "name": "youtube-api-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend API for YouTube data fetching",
   "main": "src/server.js",
   "scripts": {
