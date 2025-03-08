@@ -1,12 +1,16 @@
-const express = require("express");
-const axios = require("axios");
+import axios from "axios";
 
-const router = express.Router();
+export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
 
-// Get videos from YouTube API
-router.get("/videos", async (req, res) => {
   try {
-    const API_KEY = process.env.RAPIDAPI_KEY;  // Make sure this is set!
+    const API_KEY = process.env.RAPIDAPI_KEY; // Make sure this is set
+    if (!API_KEY) {
+      return res.status(500).json({ error: "Missing RAPIDAPI_KEY" });
+    }
+
     const response = await axios.get("https://youtube-v31.p.rapidapi.com/search", {
       params: {
         part: "snippet",
@@ -19,11 +23,9 @@ router.get("/videos", async (req, res) => {
       },
     });
 
-    res.json(response.data);
+    res.status(200).json(response.data);
   } catch (error) {
     console.error("Error fetching videos:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to fetch videos" });
   }
-});
-
-module.exports = router;
+}
