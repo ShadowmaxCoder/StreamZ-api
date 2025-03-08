@@ -20,55 +20,43 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Query parameter is required" });
   }
 
-  const options = {
-    method: "GET",
-    url: `https://${RAPIDAPI_HOST}/search`,
-    params: {
-      q: query,
-      part: "id,snippet",
-      type: "video",
-      maxResults: 12, // Fixed value, you can modify this as needed
-      offset: parseInt(offset, 10), // Convert to integer
-    },
-    headers: {
-      "x-rapidapi-key": RAPIDAPI_KEY,
-      "x-rapidapi-host": RAPIDAPI_HOST,
-    },
-  };
-
   try {
-    const { data } = await axios.request(options);
+    const response = await axios.get(`https://${RAPIDAPI_HOST}/search`, {
+      params: {
+        q: query,
+        part: "id,snippet",
+        type: "video",
+        maxResults: 12,
+        offset: parseInt(offset, 10),
+      },
+      headers: {
+        "x-rapidapi-key": RAPIDAPI_KEY,
+        "x-rapidapi-host": RAPIDAPI_HOST,
+      },
+    });
 
-    const response = {
+    const data = response.data;
+
+    if (!data || !data.items) {
+      return res.status(500).json({ error: "Invalid response from YouTube API" });
+    }
+
+    return res.json({
       kind: "youtube#videoListResponse",
       items: data.items.map((video) => ({
-        kind: "youtube#video",
-        id: video.id.videoId,
-        snippet: {
-          publishedAt: video.snippet.publishedAt,
-          channelId: video.snippet.channelId,
-          title: video.snippet.title,
-          description: video.snippet.description,
-          thumbnails: video.snippet.thumbnails,
-          channelTitle: video.snippet.channelTitle,
-          tags: video.snippet.tags || [],
-          categoryId: video.snippet.categoryId,
-          liveBroadcastContent: video.snippet.liveBroadcastContent,
-          localized: {
-            title: video.snippet.title,
-            description: video.snippet.description,
-          },
-        },
+        id: video?.id?.videoId || "Unknown",
+        title: video?.snippet?.title || "No title",
+        description: video?.snippet?.description || "No description",
+        thumbnails: video?.snippet?.thumbnails || {},
+        channelTitle: video?.snippet?.channelTitle || "Unknown Channel",
       })),
       pageInfo: {
-        totalResults: data.pageInfo.totalResults,
-        resultsPerPage: data.pageInfo.resultsPerPage,
+        totalResults: data?.pageInfo?.totalResults || 0,
+        resultsPerPage: data?.pageInfo?.resultsPerPage || 12,
       },
-    };
-
-    return res.json(response);
+    });
   } catch (error) {
-    console.error("RapidAPI YouTube Error:", error.response?.data || error.message);
+    console.error("YouTube API Error:", error.response?.data || error.message);
     return res.status(500).json({
       error: "Failed to fetch videos from YouTube",
       details: error.response?.data || error.message,
