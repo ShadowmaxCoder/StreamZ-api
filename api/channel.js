@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     let url;
     let params;
 
-        if (!channelId) return res.status(400).json({ error: "Playlist ID is required" });
+        if (!channelId) return res.status(400).json({ error: "Channel ID is required" });
 
         url = `https://${RAPID_API_HOST_ALT}/channel`;
         params = { id: channelId , sort_by: sorting };
