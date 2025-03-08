@@ -7,6 +7,6 @@
     }
   ],
   "routes": [
-    { "src": "/api/videos", "dest": "/api/videos.js" }
+    { "src": "/api/videos/(?<id>[^/]+)", "dest": "/api/videos/[id].js" }
   ]
 }

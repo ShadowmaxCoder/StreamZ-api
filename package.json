@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Backend API for YouTube data fetching",
-  "main": "src/server.js",
   "scripts": {
     "start": "",
     "dev": ""
   },
   "dependencies": {
-    "dotenv": "^16.4.7",
     "axios": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.1",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
