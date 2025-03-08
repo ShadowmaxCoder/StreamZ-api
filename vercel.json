@@ -13,6 +13,6 @@
     { "src": "/api/channel", "dest": "/api/channel.js" },
     { "src": "/api/playlists", "dest": "/api/playlists.js" },
     { "src": "/api/comments", "dest": "/api/comments.js" },
-    { "src": "/api/captions", "dest": "/api/captions.js" }
+    { "src": "/api/trending", "dest": "/api/trending.js" }
   ]
 }
