@@ -19,36 +19,52 @@ export default async function handler(req, res) {
   if (!query) {
     return res.status(400).json({ error: "Query parameter is required" });
   }
+    const options = {
+        method: 'GET',
+        url: 'https://youtube-v31.p.rapidapi.com/search',
+        params: {
+            q: query,
+            part: 'id,snippet',
+            type: 'video',
+            maxResults: '12',
+            offset: 0 // Use the offset for pagination
+        },
+        headers: {
+            'x-rapidapi-key': rapidApiKey,
+            'x-rapidapi-host': 'youtube-v31.p.rapidapi.com'
+        }
+    };
 
-  try {
-    const response = await axios.get(`https://${RAPIDAPI_HOST}/search`, {
-      params: {
-        q: query,
-        part: "snippet",
-        maxResults: 10,
-      },
-      headers: {
-        "X-RapidAPI-Key": RAPIDAPI_KEY,
-        "X-RapidAPI-Host": RAPIDAPI_HOST,
-      },
-    });
-
-    if (!response.data.items.length) {
-      return res.status(404).json({ error: "No videos found for the query" });
+    try {
+        const { data } = await axios.request(options);
+        return {
+            kind: "youtube#videoListResponse",
+            items: data.items.map((video) => ({
+                kind: "youtube#video",
+                id: video.id.videoId,
+                snippet: {
+                    publishedAt: video.snippet.publishedAt,
+                    channelId: video.snippet.channelId,
+                    title: video.snippet.title,
+                    description: video.snippet.description,
+                    thumbnails: video.snippet.thumbnails,
+                    channelTitle: video.snippet.channelTitle,
+                    tags: video.snippet.tags || [],
+                    categoryId: video.snippet.categoryId,
+                    liveBroadcastContent: video.snippet.liveBroadcastContent,
+                    localized: {
+                        title: video.snippet.title,
+                        description: video.snippet.description
+                    }
+                }
+            })),
+            pageInfo: {
+                totalResults: data.pageInfo.totalResults,
+                resultsPerPage: data.pageInfo.resultsPerPage
+            }
+        };
+    } catch (error) {
+        console.error('RapidAPI YouTube Error:', error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Failed to fetch videos from YouTube");
     }
-
-    const videos = response.data.items.map((video) => ({
-      id: video.id.videoId,
-      title: video.snippet.title,
-      description: video.snippet.description,
-      thumbnail: video.snippet.thumbnails.high.url,
-      channel: video.snippet.channelTitle,
-      publishedAt: video.snippet.publishedAt,
-    }));
-
-    return res.json(videos);
-  } catch (error) {
-    console.error("YouTube API error:", error.message);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
 }
