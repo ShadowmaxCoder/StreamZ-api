@@ -7,10 +7,6 @@ const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || 'a795c68509msh32efefe1c84b123p1
 const RAPIDAPI_HOST = "youtube-v31.p.rapidapi.com";
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
