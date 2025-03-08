@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || 'a795c68509msh32efefe1c84b123p16d7a5jsnaeccde4317d4';
-const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || "https://youtube-v31.p.rapidapi.com";
+const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+const RAPIDAPI_HOST = "youtube-v31.p.rapidapi.com";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -15,56 +15,63 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { query } = req.query;
+  const { query, offset = 0 } = req.query;
   if (!query) {
     return res.status(400).json({ error: "Query parameter is required" });
   }
-    const options = {
-        method: 'GET',
-        url: 'https://youtube-v31.p.rapidapi.com/search',
-        params: {
-            q: query,
-            part: 'id,snippet',
-            type: 'video',
-            maxResults: '12',
-            offset: 0 // Use the offset for pagination
+
+  const options = {
+    method: "GET",
+    url: `https://${RAPIDAPI_HOST}/search`,
+    params: {
+      q: query,
+      part: "id,snippet",
+      type: "video",
+      maxResults: 12, // Fixed value, you can modify this as needed
+      offset: parseInt(offset, 10), // Convert to integer
+    },
+    headers: {
+      "x-rapidapi-key": RAPIDAPI_KEY,
+      "x-rapidapi-host": RAPIDAPI_HOST,
+    },
+  };
+
+  try {
+    const { data } = await axios.request(options);
+
+    const response = {
+      kind: "youtube#videoListResponse",
+      items: data.items.map((video) => ({
+        kind: "youtube#video",
+        id: video.id.videoId,
+        snippet: {
+          publishedAt: video.snippet.publishedAt,
+          channelId: video.snippet.channelId,
+          title: video.snippet.title,
+          description: video.snippet.description,
+          thumbnails: video.snippet.thumbnails,
+          channelTitle: video.snippet.channelTitle,
+          tags: video.snippet.tags || [],
+          categoryId: video.snippet.categoryId,
+          liveBroadcastContent: video.snippet.liveBroadcastContent,
+          localized: {
+            title: video.snippet.title,
+            description: video.snippet.description,
+          },
         },
-        headers: {
-            'x-rapidapi-key': rapidApiKey,
-            'x-rapidapi-host': 'youtube-v31.p.rapidapi.com'
-        }
+      })),
+      pageInfo: {
+        totalResults: data.pageInfo.totalResults,
+        resultsPerPage: data.pageInfo.resultsPerPage,
+      },
     };
 
-    try {
-        const { data } = await axios.request(options);
-        return {
-            kind: "youtube#videoListResponse",
-            items: data.items.map((video) => ({
-                kind: "youtube#video",
-                id: video.id.videoId,
-                snippet: {
-                    publishedAt: video.snippet.publishedAt,
-                    channelId: video.snippet.channelId,
-                    title: video.snippet.title,
-                    description: video.snippet.description,
-                    thumbnails: video.snippet.thumbnails,
-                    channelTitle: video.snippet.channelTitle,
-                    tags: video.snippet.tags || [],
-                    categoryId: video.snippet.categoryId,
-                    liveBroadcastContent: video.snippet.liveBroadcastContent,
-                    localized: {
-                        title: video.snippet.title,
-                        description: video.snippet.description
-                    }
-                }
-            })),
-            pageInfo: {
-                totalResults: data.pageInfo.totalResults,
-                resultsPerPage: data.pageInfo.resultsPerPage
-            }
-        };
-    } catch (error) {
-        console.error('RapidAPI YouTube Error:', error.response?.data || error.message);
-        throw new Error(error.response?.data?.message || "Failed to fetch videos from YouTube");
-    }
+    return res.json(response);
+  } catch (error) {
+    console.error("RapidAPI YouTube Error:", error.response?.data || error.message);
+    return res.status(500).json({
+      error: "Failed to fetch videos from YouTube",
+      details: error.response?.data || error.message,
+    });
+  }
 }
