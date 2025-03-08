@@ -10,7 +10,7 @@
     { "src": "/api/videoDetails", "dest": "/api/videoDetails.js" },
     { "src": "/api/search", "dest": "/api/search.js" },
     { "src": "/api/relatedVideos", "dest": "/api/relatedVideos.js" },
-    { "src": "/api/channel", "dest": "/api/channel.js" }
+    { "src": "/api/channel", "dest": "/api/channel.js" },
     { "src": "/api/playlists", "dest": "/api/playlists.js" },
     { "src": "/api/comments", "dest": "/api/comments.js" },
     { "src": "/api/captions", "dest": "/api/captions.js" }
