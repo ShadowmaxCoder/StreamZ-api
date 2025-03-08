@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     const { type, query, videoId } = req.query;
 
     let url = `https://${RAPID_API_HOST_ALT}/search`;
-    let params = { geo: "US", lang: "en", maxResults: 50 };
+    let params = { geo: "IN", lang: "en", maxResults: 50 };
 
     switch (type) {
         case "videos":
