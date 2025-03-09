@@ -1,8 +1,4 @@
 import axios from "axios";
-import Cors from "cors";
-import { promisify } from "util";
-
-const cors = promisify(Cors({ methods: ["GET"] }));
 
 // Secure API Key for the Alternative YouTube API
 const RAPID_API_KEY_ALT = process.env.RAPID_API_KEY;
@@ -37,7 +33,15 @@ async function fetchYouTubeData(url, params = {}) {
  * API Handler for fetching YouTube data.
  */
 export default async function handler(req, res) {
-    await cors(req, res);
+    
+    // ✅ Manually Set CORS Headers (instead of Cors middleware)
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    if (req.method === "OPTIONS") {
+        return res.status(200).end(); // Preflight request response
+    }
     
     const { type } = req.query;
 
