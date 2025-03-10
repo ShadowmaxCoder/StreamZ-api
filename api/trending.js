@@ -34,14 +34,15 @@ async function fetchYouTubeData(url, params = {}) {
  */
 export default async function handler(req, res) {
     
-    // ✅ Manually Set CORS Headers (instead of Cors middleware)
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  // Set CORS headers to allow cross-origin requests (if needed)
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080"); // You can specify your frontend URL here instead of "*"
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    if (req.method === "OPTIONS") {
-        return res.status(200).end(); // Preflight request response
-    }
+  // Handle OPTIONS request (preflight request) for CORS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
     
     const { type } = req.query;
 
