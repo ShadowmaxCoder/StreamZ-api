@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import Cors from "cors";
 import { promisify } from "util";
 
@@ -38,29 +37,28 @@ async function fetchYouTubeData(url, params = {}) {
  * API Handler for fetching YouTube data.
  */
 export default async function handler(req, res) {
-
     const { type } = req.query;
 
     let url;
     let params;
 
-        if (!type) return res.status(400).json({ error: "Type parameter is required" });
+    if (!type) return res.status(400).json({ error: "Type parameter is required" });
 
-        url = `https://${RAPID_API_HOST_ALT}/trending`;
-        params = { type: type,  geo: 'IN',   lang: 'en' };
+    url = `https://${RAPID_API_HOST_ALT}/trending`;
+    params = { type: type, geo: 'IN', lang: 'en' };
 
     try {
         const apiResponse = await fetchYouTubeData(url, params);
-        
+
         // A valid playlist response should have data and videos array
         if (!apiResponse || !apiResponse.data) {
             console.error("🚨 Invalid API response format:", apiResponse);
             return res.status(500).json({ error: "Unexpected API response format" });
         }
-        
+
+        res.setHeader("Access-Control-Allow-Origin", "*");
         res.status(200).json({ response: apiResponse });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 }
-
