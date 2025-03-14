@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     const { type, videoId } = req.query;
 
     let url;
-    let params = { geo: "IN", lang: "en", maxResults: 50 };
+    let params = { geo: "IN", lang: "en" };
 
     if (type === "videoDetails") {
         if (!videoId) return res.status(400).json({ error: "Video ID is required" });
