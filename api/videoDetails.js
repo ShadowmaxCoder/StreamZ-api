@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     if (type === "videoDetails") {
         if (!videoId) return res.status(400).json({ error: "Video ID is required" });
 
-        url = https://${RAPID_API_HOST_ALT}/video;
+        url = `https://${RAPID_API_HOST_ALT}/video`;
         params.id = videoId;
     } else {
         return res.status(400).json({ error: "Invalid request type" });
